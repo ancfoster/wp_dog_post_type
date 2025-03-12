@@ -1,0 +1,6 @@
+*.log
+
+# htaccess
+/.htaccess
+
+.DS_Store
