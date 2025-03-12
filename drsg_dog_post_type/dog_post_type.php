@@ -15,7 +15,7 @@ class Dogs_Post_Type {
 // Constructor 
     public function __construct() {
         add_action( 'init', array( $this, 'register_dog_post_type' ) );
-        add_action( 'init', array( $this, 'register_adoption_status_taxonmy' ) );
+        add_action( 'init', array( $this, 'register_adoption_status_taxonomy' ) );
         // add_action( 'add_meta_boxes', array( $this, 'add_dog_meta_box' ) );
         // add_action( 'save_post', array( $this, 'save_dog_meta' ) );
 
@@ -52,15 +52,15 @@ class Dogs_Post_Type {
         register_post_type( 'dog', $args );
     }
 
-    public function register_adoption_status_taxonmy() {
+    public function register_adoption_status_taxonomy() {
         $labels = array(
             'name' => 'Adoption Status',
             'singular_name' => 'Adoption Status',
         );
         $args = array(
-            'public' => false,
-            'show_ui' => false,
-            'show_in_menu' => false,
+            'public' => true,
+            'show_ui' => true,
+            'show_in_menu' => true,
             'show_admin_column' => true,
             'show_in_quick_edit' => false,
             'hierarchical' => false,
@@ -71,18 +71,24 @@ class Dogs_Post_Type {
                 'delete_terms' => false,
                 'assign_terms' => true
             )
-        )
+        );
 
-        $adoption_stauses = array(
+        register_taxonomy('adoption_status', 'dog', $args);
+
+        $adoption_statuses = array(
             'adopted' => 'Adopted',
             'accepting_applications' => 'Accepting Applications',
-            'processing_applicatiobs' => 'Processing Applications',
+            'processing_applications' => 'Processing Applications',
             'applications_opening_soon' => 'Applications Opening Soon',
             'alumni' => 'Alumni',
             'crossed_the_rainbow_bridge' => 'Crossed the Rainbow Bridge'
         );
 
-        register_taxonomy( 'adoption_status', 'dog', $args );
+        foreach ($adoption_statuses as $slug => $name) {
+            if (!term_exists($slug, 'adoption_status')) {
+                wp_insert_term($name, 'adoption_status', array('slug' => $slug));
+            }
+        }
     }
 
 }
